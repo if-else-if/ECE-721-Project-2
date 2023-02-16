@@ -1,0 +1,27 @@
+Removing the simenv at /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+rm -frv /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+removed ‘/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.bin’
+removed ‘/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.cfg’
+removed ‘/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/astar_base.rv64’
+removed directory: ‘/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app’
+removed directory: ‘/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv’
+Setting up a new simenv at /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+atool-simenv spawn 473.astar_rivers_ref /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+Spawning simenv for app 473.astar_rivers_ref
+Mkdir /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app
+Symlink /mnt/designkits/spec_2006_2017/O2_fno_bbreorder/app_storage/sysroots/473.astar_ref/app/astar_base.rv64 -> /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/astar_base.rv64
+Mkdir /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app
+Symlink /mnt/designkits/spec_2006_2017/O2_fno_bbreorder/app_storage/sysroots/473.astar_ref/app/rivers.bin -> /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.bin
+Mkdir /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app
+Symlink /mnt/designkits/spec_2006_2017/O2_fno_bbreorder/app_storage/sysroots/473.astar_ref/app/rivers.cfg -> /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.cfg
+Verifing the simenv at /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+atool-simenv verify 473.astar_rivers_ref /mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv
+Begin pre-run file environment checking: 473.astar_rivers_ref @ [/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv]
+
+Checking path [/app/astar_base.rv64] <--> [/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/astar_base.rv64]
+Checking path [/app/rivers.bin] <--> [/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.bin]
+Checking path [/app/rivers.cfg] <--> [/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv/app/rivers.cfg]
+
+Pre-Run FS checking passed.
+Starting simulation
+./721sim -m256 -c/mnt/designkits/spec_2006_2017/O2_fno_bbreorder/app_storage/checkpoints/473.astar_rivers_ref/473.astar_rivers_ref.252.0.28.gz --disambig=0,1,0 --perf=0,0,0,0 --fq=64 --cp=32 --al=256 --lsq=128 --iq=64 --iqnp=4 --fw=4 --dw=4 --iw=8 --rw=4 -e10000000   +chroot=/mnt/ncsudrive/v/vsridha2/_afs/2023/721/Project-2/val1/simenv +target-cwd=/app pk   astar_base.rv64 rivers.cfg 

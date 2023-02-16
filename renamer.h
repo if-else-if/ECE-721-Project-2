@@ -1,6 +1,6 @@
 #include <inttypes.h>
 #include <assert.h>
-#include<vector>
+#include <vector>
 
 using namespace std;
 
@@ -8,78 +8,26 @@ class Free_List{
 	public:
 
     vector<uint64_t> free_list;
-
-    int head;
-    int tail;
+	uint64_t free_list_size;
+    uint64_t  head;
+    uint64_t tail;
     bool head_phase;
     bool tail_phase;
 	
-	Free_List(){
-		for(uint64_t i=0; i <free_list.size(); i++)
-			free_list[i] =i;
-		head = 0;
-    	tail = 0;
-    	head_phase = false;
-    	tail_phase= true; 
-	}
+	Free_List(uint64_t free_list_size, uint64_t log_reg_size, uint64_t n_phys_regs);
 
-    bool isFull(){
-		if((head == tail) && (head_phase != tail_phase))
-        	return true;
-    	else
-        	return false;
-	}
+    bool isFull();
     
-	bool Future_isFull(uint64_t bundle_size){
-    	int temp_tail = tail+bundle_size;
-    	bool temp_tail_phase = tail_phase;
-
-    	if( temp_tail >= free_list.size()){
-        	temp_tail_phase = !temp_tail_phase;
-        	temp_tail = temp_tail-free_list.size();
-    	}
-
-    	if((head == temp_tail ) && (head_phase!= temp_tail_phase))
-        	return true;
-    	else
-        	return false;
-	}
+	uint64_t count_free_regs();
     //bool Future_isEmpty();
     
-	bool isEmpty(){
-	    if((head == tail) && (head_phase == tail_phase))
-        	return true;
-    	else
-        	return false;
-	}
+	bool isEmpty();
 
-    void push_into_fl(uint64_t val){
-		if(isFull()) return;
+    void push_into_fl(uint64_t val);
 
-    	if(tail == (free_list.size()-1) ){
-        	tail =0;
-        	free_list[tail++] = val;
-        	tail_phase = !tail_phase;
-        	return;
-    	}
+    uint64_t pop_from_fl();
 
-    	free_list[tail++] = val;	
-	}
-
-    void pop_from_fl(){
-    	if(isEmpty()) return ;
-		uint64_t temp = -1;
-
-    	if( head == (free_list.size() -1)){
-			// temp = free_list[head];
-        	head =0;
-        	head_phase = !head_phase;
-        	return ;
-    	}
-		// temp = head;
-    	head++;
-		return ;
-	}
+	void resize(uint64_t free_list_size,uint64_t log_reg_size );
 };
 
 class Active_List_entry{
@@ -96,42 +44,13 @@ class Active_List_entry{
     bool branch_misprediction;
     bool value_misprediction;
 
-    bool load_flag, store_flag, amo_flag, csr_flag;
+    bool load_flag, store_flag, amo_flag, csr_flag, branch;
 
     uint64_t PC;
 
-    Active_List_entry(){
-		dest_flag = false;
-    	log_reg_num= -1;
-    	p_reg_num= -1;
-    	completed=false;
-    	exception=false;
-		load_violation = false;
-		branch_misprediction = false;
-		value_misprediction = false;
-		load_flag= false;
-		store_flag = false;
-		amo_flag = false;
-		csr_flag = false;
-		PC=0;
-	}
+    Active_List_entry();
 
-	Active_List_entry( const Active_List_entry& entry){
-		dest_flag = entry.dest_flag;
-	   	log_reg_num=entry.log_reg_num;
-    	p_reg_num=entry.p_reg_num;
-    	completed=entry.completed;
-    	exception=entry.exception;
-		load_violation = entry.load_violation;
-		branch_misprediction = entry.branch_misprediction;
-		value_misprediction = entry.value_misprediction;
-		load_flag= entry.load_flag;
-		store_flag = entry.store_flag;
-		amo_flag = entry.amo_flag;
-		csr_flag = entry.csr_flag;
-		PC=entry.PC;
-
-	}
+	Active_List_entry( const Active_List_entry& entry);
 };
 
 
@@ -139,75 +58,25 @@ class Active_List_entry{
 class Active_List{
 	public:
     vector<Active_List_entry> active_list;
-    int head;
-    int tail;
+	uint64_t active_list_size;
+    uint64_t head;
+    uint64_t tail;
     bool head_phase;
     bool tail_phase;
 
-	Active_List(){
-		head=0;
-		tail =0;
-		head_phase = true;
-		tail_phase = true;
-	}
+	Active_List(uint64_t active_list_size);
 
-	bool isEmpty(){
-	    if((head == tail) && (head_phase == tail_phase))
-        	return true;
-    	else
-        	return false;
-	}
+	void resize(uint64_t active_list_size);
 
-	bool isFull(){
-		if((head == tail) && (head_phase != tail_phase))
-        	return true;
-    	else
-        	return false;
-	}
+	bool isEmpty();
 
-	void push_into_al(Active_List_entry val){
-		if(isFull())
-			return;
+	bool isFull();
 
-		if(tail == (active_list.size()-1) ){
-        	tail =0;
-        	active_list[tail++] = val;
-        	tail_phase = !tail_phase;
-        	return;
-    	}
-
-    	active_list[tail++] = val;
-		
-	}
+	void push_into_al(Active_List_entry val);
 	
-	void pop_from_al(){
-    	if(isEmpty() == true) return ;
-		uint64_t temp;
+	Active_List_entry pop_from_al();
 
-    	if( head == (active_list.size() -1)){
-			// temp = active_list[head].p_reg_num;
-        	head =0;
-        	head_phase = !head_phase;
-        	return ;
-    	}
-		// temp = active_list[head].p_reg_num;
-    	head++;
-		return ;
-	}
-
-	bool Future_isFull(uint64_t bundle_size){
-	    int temp_tail = tail+bundle_size;
-		bool temp_tail_phase = tail_phase;
-		if( temp_tail >= active_list.size()){
-			temp_tail_phase = !temp_tail_phase;
-			temp_tail = temp_tail - active_list.size();
-		}
-
-		if((head == temp_tail ) && (head_phase!= temp_tail_phase))
-			return true;
-		else
-			return false;
-	}
+	uint64_t free_space();
 };
 
 class Branch_Checkpoints_entry{
@@ -215,36 +84,19 @@ class Branch_Checkpoints_entry{
 
     vector<uint64_t> rmt_c;
 
-    int fl_head_c;
+    uint64_t fl_head_c;
     bool fl_head_phase_c;
     uint64_t GBM_c;
+	uint64_t al_tail_c;
+	bool al_tail_phase_c;
 
 
-	Branch_Checkpoints_entry(){
-		for(uint64_t i=0; i <rmt_c.size(); i++){
-			rmt_c[i] = -1;
-		}
-		fl_head_c = -1;
-		fl_head_phase_c = false;
-		GBM_c =0;
-	}
+
+	Branch_Checkpoints_entry();
 
 	
 	// copy constructor 
-	Branch_Checkpoints_entry(const Branch_Checkpoints_entry& entry){
-		for(uint64_t i =0; i <entry.rmt_c.size(); i++)
-			rmt_c[i] = entry.rmt_c[i];
-		fl_head_c = entry.fl_head_c;
-		fl_head_phase_c = entry.fl_head_phase_c;
-		GBM_c = entry.GBM_c;
-	}
-
-    void set_fl_head_c(int val){ fl_head_c = val;}
-
-    void set_fl_head_phase_c(bool val){ fl_head_phase_c = val;}
-
-	void set_gbm_c(uint64_t val){ GBM_c = val;}
-
+	Branch_Checkpoints_entry(const Branch_Checkpoints_entry& entry);
     void set_smt(vector<uint64_t> rmt){
 		for(uint64_t i =0; i <rmt.size(); i++){
 			rmt_c[i] = rmt[i];
@@ -264,6 +116,7 @@ private:
     uint64_t n_phys_regs;
     uint64_t n_branches;
     uint64_t n_active;
+	uint64_t free_list_size = n_log_regs - n_phys_regs;
 
 	/////////////////////////////////////////////////////////////////////
 	// Structure 1: Rename Map Table
@@ -285,7 +138,7 @@ private:
 	// Notes:
 	// * Structure includes head, tail, and their phase bits.
 	/////////////////////////////////////////////////////////////////////
-    Free_List fl;
+    Free_List fl = Free_List(free_list_size, n_log_regs, n_phys_regs);
 
 	/////////////////////////////////////////////////////////////////////
 	// Structure 4: Active List
@@ -326,7 +179,7 @@ private:
 	// * Structure includes head, tail, and their phase bits.
 	/////////////////////////////////////////////////////////////////////
 
-    Active_List al;
+    Active_List al = Active_List(n_active);
 
 	/////////////////////////////////////////////////////////////////////
 	// Structure 5: Physical Register File
@@ -429,10 +282,10 @@ public:
 	// Then, initialize the data structures based on the knowledge
 	// that the pipeline is intially empty (no in-flight instructions yet).
 	/////////////////////////////////////////////////////////////////////
-	renamer(uint64_t n_log_regs,
-		uint64_t n_phys_regs,
-		uint64_t n_branches,
-		uint64_t n_active);
+	renamer(uint64_t n_log_regs_,
+		uint64_t n_phys_regs_,
+		uint64_t n_branches_,
+		uint64_t n_active_);
 
 	/////////////////////////////////////////////////////////////////////
 	// This is the destructor, used to clean up memory space and

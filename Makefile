@@ -1,11 +1,12 @@
 CC = g++
 OPT = -O3
-#OPT = -g
+FLAGS= -std=c++11 -Wall
+# OPT = -g
 
 INC = -I.
 LIB = -L.
 
-CFLAGS = $(OPT) $(INC) $(LIB)
+CFLAGS = $(OPT) $(INC) $(LIB) 
 
 LIBS = -l721sim -lpthread -lz -ldl 
 
@@ -19,7 +20,7 @@ all: $(OBJECTS)
 	@echo "-----------DONE WITH 721sim-----------"
 
 %.o: %.cc
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS)  $(FLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o 721sim core
